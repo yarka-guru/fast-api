@@ -1,17 +1,26 @@
-# Minimal image for production environment (no dev dependencies) fastAPI
-FROM python:3.11.1-slim-bullseye
+# Define the build stage
+FROM python:3.11.1-alpine3.17 AS build
 
-# Set the working directory to /app
+ENV PYTHONUNBUFFERED 1
+
+COPY ./requirements.txt /requirements.txt
+
+RUN python -m venv /py && \
+    /py/bin/pip install --upgrade pip && \
+    /py/bin/pip install --trusted-host pypi.python.org --no-cache-dir -r /requirements.txt
+
+# Use the build stage
+FROM python:3.11.1-alpine3.17
+
+COPY --from=build /py /py
+
+ENV PYTHONUNBUFFERED 1
+ENV PATH="/py/bin:$PATH"
+
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+COPY ./app /app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
-
-# Make port 80 available to the world outside this container
 EXPOSE 80
 
-# Run app.py when the container launches
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
