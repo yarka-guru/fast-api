@@ -1,8 +1,0 @@
-name: fast-api
-description: A Fast API service with Redis
-version: 0.0.1
-apiVersion: v1
-keywords:
-  - fast-api
-sources: 
-home: 

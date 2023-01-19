@@ -12,3 +12,8 @@ def read_root():
 def read_counter():
     r.incr('counter')
     return {"counter": r.incr('counter')}
+
+@app.get("/health")
+def read_health():
+    return {"status": "ok"}
+    
